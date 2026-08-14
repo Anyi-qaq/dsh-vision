@@ -1,0 +1,8 @@
+{
+  "name": "dsh-vision",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Machine-local DSH plugin: OpenAI-compatible vision tools (vision_image, vision_video, vision_config).",
+  "main": "index.js"
+}

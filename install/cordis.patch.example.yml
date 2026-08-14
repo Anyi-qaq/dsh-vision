@@ -1,0 +1,7 @@
+# dsh-vision install example — merge into $DSH_HOME/cordis.patch.yml
+# Replace <USER> with your actual home directory user name.
+- insert:
+    - id: tool-vision
+      name: file:///home/<USER>/.dsh/profiles/web/plugins/dsh-vision/index.js
+    - id: tool-vision-ui
+      name: dsh-vision-ui
