@@ -67,3 +67,7 @@ API key 存入 DSH credentials 服务（`~/.dsh/.credentials.yaml` 的 `DSH_VISI
 
 - 客户端 bundle（`dsh-vision-client/lib/client.js`）为手工编写的浏览器插件，依赖前端种子模块（`react`、`@deepseek-ai/dsh-client-web-react` 等），无需构建工具链。
 - 该仓库不含任何密钥；所有路径示例请按本机实际情况替换。
+
+## License
+
+[MIT](LICENSE)
