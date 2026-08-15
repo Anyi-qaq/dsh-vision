@@ -487,5 +487,61 @@ export function apply(ctx) {
     },
   }))
 
+  // ---------- browser RPC channel (composer upload button) ----------
+  // Serves the dsh-vision-client upload button: "status" probes configuration,
+  // "analyze" runs the same vision call as the vision_image tool on an image
+  // the browser sends as a data: URL. The client half calls this channel via
+  // ctx.connection.rpc.call('/dsh-vision', 'analyze', payload).
+  const connection = ctx.get('connection')
+  if (connection !== undefined && connection.rpc !== undefined && typeof connection.rpc.handle === 'function') {
+    const rpcHandler = async (endpoint, payload, signal) => {
+      try {
+        if (endpoint === 'status') {
+          const key = await resolveApiKey(undefined)
+          const profile = readProfile()
+          return {
+            ok: true,
+            value: {
+              configured: key !== undefined,
+              baseUrl: profile.baseUrl !== '' ? profile.baseUrl : null,
+              model: profile.model !== '' ? profile.model : null,
+            },
+          }
+        }
+        if (endpoint === 'analyze') {
+          const input = payload !== null && typeof payload === 'object' ? payload : {}
+          if (typeof input.dataUrl !== 'string' || input.dataUrl === '') {
+            return { ok: false, error: { code: 'bad-request', message: 'missing dataUrl', details: { issues: [] } } }
+          }
+          const prompt = typeof input.prompt === 'string' && input.prompt.trim() !== '' ? input.prompt : '请详细描述这张图片的内容。'
+          const common = await resolveCommon(input, false)
+          const detail = input.detail === 'low' || input.detail === 'high' ? input.detail : 'auto'
+          const messages = [{
+            role: 'user',
+            content: [
+              { type: 'text', text: prompt },
+              { type: 'image_url', image_url: { url: String(input.dataUrl), detail: detail } },
+            ],
+          }]
+          const res = await chatCompletion({
+            base: common.base, key: common.key, model: common.model, messages: messages,
+            maxTokens: typeof input.maxTokens === 'number' ? input.maxTokens : 1024, signal: signal,
+          })
+          return { ok: true, value: { content: res.content, model: res.model } }
+        }
+        return { ok: false, error: { code: 'bad-request', message: 'unknown endpoint: ' + String(endpoint), details: { issues: [] } } }
+      } catch (error) {
+        return { ok: false, error: { code: 'internal', message: error instanceof Error ? error.message : String(error), details: {} } }
+      }
+    }
+    const disposeChannel = connection.rpc.handle('/dsh-vision', rpcHandler, { authority: 'loopback' })
+    ctx.on('dispose', function () {
+      disposeChannel().catch(function () { /* ignore disposal errors */ })
+    })
+    console.log('[dsh-vision] browser RPC channel ready: /dsh-vision (analyze, status)')
+  } else {
+    console.warn('[dsh-vision] connection service unavailable; browser upload channel disabled')
+  }
+
   console.log('[dsh-vision] installed: vision_image, vision_video, vision_config')
 }

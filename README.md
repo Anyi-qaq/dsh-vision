@@ -1,5 +1,7 @@
 # dsh-vision
 
+> ⚠️ **本仓库已归档，项目不可用（不再维护）。** 代码仅作存档参考。
+
 OpenAI 兼容的识图 / 视频插件，安装到 DeepSeek Harness (DSH) 本体。
 
 > **AI 生成声明**：本仓库代码由 AI 编程助手（运行于 DeepSeek Harness 的编码智能体）在仓库所有者指导下生成，并经所有者确认后发布。
@@ -14,8 +16,10 @@ OpenAI 兼容的识图 / 视频插件，安装到 DeepSeek Harness (DSH) 本体�
 
 WebUI 配置入口（安装客户端包后）：
 
-- **设置 → Vision**：base URL、默认图片/视频模型、API key
-- **设置 → 插件 → 插件配置**：Vision 配置卡片
+- **输入框上传按钮**（聊天输入区工具行左侧的图片按钮）：选择图片后先暂存到浏览器缓存（小图存 sessionStorage，可跨页面刷新恢复），**不会自动识图**——
+  - 点击悬浮卡片里的「开始识别」才按需调用识图；提问取点击时刻输入框里的文字，为空则默认"请详细描述这张图片的内容"
+  - 结果以悬浮卡片展示（缩略图 + 识别文本 + 模型名），可重新识别、复制、一键插入草稿后发给 Agent；「换一张」更换图片，「移除」清空缓存
+- **设置 → 插件 → 插件配置**：Vision 配置卡片（base URL、默认图片/视频模型、API key）
 - **设置 → 插件 → 插件清单**：`dsh-vision-ui`（浏览器端）与 `tool-vision`（主机端）状态
 
 配置优先级：调用参数 > `dsh-vision` 设置命名空间 / credentials > 环境变量（`OPENAI_BASE_URL`、`OPENAI_VISION_MODEL`、`OPENAI_VIDEO_MODEL`）> 默认值（`https://api.openai.com/v1`，`gpt-4o-mini`）。
@@ -52,7 +56,7 @@ ln -sfn "$PLUGIN_ROOT/dsh-vision-client" "$HOME/.dsh/profiles/node_modules/dsh-v
 ### 3. 配置
 
 - 用工具：`vision_config { action: set, baseUrl: "...", apiKey: "...", model: "...", videoModel: "..." }`
-- 或用 WebUI：设置 → Vision（base_url / 模型 / API key 直接填）
+- 或用 WebUI：设置 → 插件 → 插件配置 → Vision（base_url / 模型 / API key 直接填）
 
 API key 存入 DSH credentials 服务（`~/.dsh/.credentials.yaml` 的 `DSH_VISION_API_KEY`），不会写入仓库与配置文件的明文之外。
 

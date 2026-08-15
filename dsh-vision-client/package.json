@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Browser settings UI for the dsh-vision plugin: a Vision section on the Settings page and a configuration card in the Plugins → Plugin configuration tab.",
+  "description": "Browser UI for the dsh-vision plugin: an upload-image button in the composer tool row that stages the picture in a browser cache and calls dsh-vision analysis on demand, plus a configuration card in the Plugins → Plugin configuration tab.",
   "main": "index.js",
   "exports": {
     ".": "./index.js",
